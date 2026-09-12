@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار الدرس الثاني — كيف يعمل الذكاء الاصطناعي؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef3f7; --surface:#ffffff; --surface-2:#f8fafc; --text:#101828; --muted:#475467;
+  --line:#c9d3df; --primary:#075985; --primary2:#06476d; --ok:#067647;
+  --bad:#b42318; --warn:#b54708; --soft:#e6f3fb; --shadow:0 18px 44px rgba(15,23,42,.12);
+  --radius:8px; --radius-lg:12px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Cairo",Tahoma,Arial,"Segoe UI",sans-serif;background:linear-gradient(180deg,#dfeaf2 0,#f7f8fa 280px,var(--bg) 100%);color:var(--text);font-size:18px;line-height:1.9;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:6px;background:linear-gradient(90deg,#075985,#0f766e,#d97706);z-index:50}
+.app{max-width:1180px;margin:auto;padding:28px}
+.hero{position:relative;overflow:hidden;background:#0b4f78;color:#fff;border-radius:var(--radius-lg);padding:36px 38px;border:1px solid rgba(255,255,255,.14);box-shadow:var(--shadow);margin-bottom:18px}
+.hero::after{content:"";position:absolute;inset:auto -70px -120px auto;width:310px;height:310px;background:radial-gradient(circle,rgba(255,255,255,.16),rgba(255,255,255,0) 68%);pointer-events:none}
+.hero h1{position:relative;margin:0 0 8px;font-size:clamp(36px,5vw,58px);line-height:1.22;letter-spacing:0}
+.hero p{position:relative;margin:4px 0;opacity:.97;font-size:22px;font-weight:600}
+.eyebrow{position:relative;display:inline-flex;align-items:center;gap:8px;color:#d9eefb;font-size:16px;font-weight:800;margin-bottom:6px}
+.meta{position:relative;display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);padding:9px 15px;border-radius:999px;font-size:17px;font-weight:700}
+.sticky{position:sticky;top:8px;z-index:20;background:rgba(244,246,248,.86);backdrop-filter:blur(12px);padding:8px 0}
+.toolbar{display:flex;gap:18px;align-items:center;justify-content:space-between;background:rgba(255,255,255,.98);border:2px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:0 14px 34px rgba(15,23,42,.1)}
+.timer-panel{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:24px;color:#0f4676;min-width:132px;background:#edf7fb;border:2px solid #b9d8ea;border-radius:var(--radius);padding:8px 12px;line-height:1.4}
+.timer.is-paused{color:#854d0e;background:#fff7e6;border-color:#f1cf88}
+.timer.is-finished{color:#b42318;background:#fff1f0;border-color:#fda29b}
+.timer-icon,.print-icon,.notice-icon{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.progress-wrap{flex:1;max-width:520px}
+.progress-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px}
+.progress{height:13px;background:#dce6ee;border-radius:999px;overflow:hidden}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#1261a6,#0f766e);border-radius:inherit;transition:width .25s ease}
+.small{font-size:16px;color:var(--muted);font-weight:700}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius-lg);padding:26px;margin:18px 0;box-shadow:0 12px 30px rgba(15,23,42,.08);overflow-wrap:anywhere}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:40px 0 16px;padding:18px 20px;border:2px solid var(--section-border,#bfdbfe);border-right:10px solid var(--section-color,#075985);border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--section-bg,#eff6ff),#fff);box-shadow:0 12px 28px rgba(15,23,42,.075)}
+.section-main{display:flex;align-items:center;gap:14px}
+.section-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:var(--section-color,#075985);color:#fff;box-shadow:0 10px 20px rgba(15,23,42,.14)}
+.section-icon svg{width:25px;height:25px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.section-title{font-size:30px;margin:0;line-height:1.35;color:#0f172a}
+.section-meta{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:7px 13px;border-radius:999px;background:#fff;color:var(--section-color,#075985);border:2px solid var(--section-border,#bfdbfe);font-size:16px;font-weight:800;white-space:nowrap}
+.section-mcq{--section-color:#2563eb;--section-border:#bfdbfe;--section-bg:#eff6ff}
+.section-written{--section-color:#0f766e;--section-border:#99f6e4;--section-bg:#ecfdf5}
+.section-case{--section-color:#9333ea;--section-border:#e9d5ff;--section-bg:#faf5ff}
+.q-title{font-weight:800;font-size:24px;line-height:1.75;margin-bottom:16px;color:#0f172a}
+.option{display:flex;align-items:flex-start;gap:12px;border:2px solid var(--line);border-right-width:7px;border-radius:var(--radius);padding:15px 16px;margin:11px 0;cursor:pointer;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,transform .15s ease;background:#fff;font-size:20px;font-weight:600;line-height:1.75}
+.option:nth-of-type(1){border-right-color:#2563eb;background:#f8fbff}
+.option:nth-of-type(2){border-right-color:#0f766e;background:#f7fdfb}
+.option:nth-of-type(3){border-right-color:#d97706;background:#fffaf2}
+.option:nth-of-type(4){border-right-color:#9333ea;background:#fcf8ff}
+.option:hover{border-color:#7fb2d9;background:#f4f9fd;transform:translateX(-2px)}
+.option:has(input:checked){border-color:var(--primary);border-right-color:var(--primary);background:var(--soft);box-shadow:0 0 0 3px rgba(18,97,166,.14)}
+.option input{margin:10px 0 0 2px;accent-color:var(--primary);transform:scale(1.25);flex:0 0 auto}
+textarea{width:100%;min-height:128px;border:2px solid var(--line);border-radius:var(--radius);padding:14px 16px;font:inherit;font-size:20px;resize:vertical;background:#fff;color:var(--text);transition:border-color .15s ease,box-shadow .15s ease}
+input[type="text"]{width:100%;border:2px solid var(--line);border-radius:var(--radius);padding:12px 14px;font:inherit;font-size:18px;background:#fff;color:var(--text);transition:border-color .15s ease,box-shadow .15s ease}
+textarea:focus,input[type="text"]:focus,.btn:focus-visible,.option:focus-within{outline:0;border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,97,166,.15)}
+textarea::placeholder{color:#98a2b3}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1px solid transparent;border-radius:var(--radius);padding:11px 18px;font-size:17px;font-weight:800;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 10px 22px rgba(18,97,166,.18)}
+.btn-primary:hover{background:var(--primary2)}
+.btn-light{background:#f8fafc;color:var(--text);border-color:var(--line)}
+.btn-light:hover{background:#eef4f8}
+.btn:disabled{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:28px 0}
+.notice{padding:16px 20px;border-radius:var(--radius);background:#fff8e7;border:2px solid #f3d28f;color:#6f3a08;margin:16px 0;font-size:19px;font-weight:700;box-shadow:0 8px 22px rgba(120,53,15,.08)}
+.start-notice{display:flex;align-items:flex-start;gap:16px;padding:20px 22px;border-radius:var(--radius-lg);background:linear-gradient(135deg,#7f1d1d,#b42318);border:2px solid #fca5a5;color:#fff;margin:16px 0;box-shadow:0 16px 38px rgba(127,29,29,.24)}
+.start-notice.is-hidden{display:none}
+.start-notice .notice-icon-wrap{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;flex:0 0 auto;border:1px solid rgba(255,255,255,.28)}
+.start-notice h3{margin:0 0 5px;font-size:24px;line-height:1.4;color:#fff}
+.start-notice p{margin:0;color:#fff7ed;font-size:19px;font-weight:800}
+.start-count{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;border-radius:50%;background:#fff;color:#991b1b;font-weight:800;margin:0 5px;box-shadow:0 8px 18px rgba(0,0,0,.16)}
+.student-card{display:grid;grid-template-columns:1.3fr .9fr .9fr;gap:14px;background:linear-gradient(135deg,#f0f9ff,#fff);border-right:9px solid #075985}
+.field label{display:block;margin-bottom:6px;color:#334155;font-weight:800;font-size:16px}
+.submitted-note{display:none;margin:16px 0;padding:14px 16px;border-radius:var(--radius);background:#ecfdf3;border:2px solid #86efac;color:#065f46;font-size:18px;font-weight:800}
+.submitted-note.is-visible{display:block}
+.is-submitted input,.is-submitted textarea{background:#f8fafc;color:#475467}
+.result{display:none}
+.score{font-size:36px;font-weight:800;color:var(--primary)}
+.correct{border-color:#75e0a7!important;background:#ecfdf3!important}
+.wrong{border-color:#fda29b!important;background:#fef3f2!important}
+.answer-box{margin-top:12px;padding:14px 16px;border-radius:var(--radius);background:var(--surface-2);border:2px dashed #b7c3d4;font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case-card{overflow:hidden;padding:0;border-color:#b8c7d6}
+.case-header{background:linear-gradient(135deg,#075985,#0f766e);color:#fff;padding:24px 26px}
+.case-header .q-title{color:#fff;margin:0;font-size:27px}
+.case-body{padding:24px 26px}
+.case-text{margin:18px 0 0;padding:20px 22px;border:2px solid #b8c7d6;border-right:8px solid #075985;border-radius:var(--radius);background:linear-gradient(135deg,#f8fbff,#fff);font-size:20px;font-weight:700;line-height:2;color:#172033}
+.case-text p{margin:0 0 12px}
+.case-text p:last-child{margin-bottom:0;color:#713f12;background:#fff7e6;border:2px solid #f3d28f;border-radius:var(--radius);padding:12px 14px}
+.case-questions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.case-prompt{border:2px solid var(--line);border-radius:var(--radius);padding:16px;background:#ffffff}
+.case-prompt b{display:block;margin-bottom:10px;color:#0f172a;font-size:19px}
+.case-prompt:nth-child(1){border-top:7px solid #2563eb}
+.case-prompt:nth-child(2){border-top:7px solid #0f766e}
+.case-prompt:nth-child(3){border-top:7px solid #9333ea}
+.case-prompt:nth-child(4){border-top:7px solid #d97706}
+.case-prompt:nth-child(5){border-top:7px solid #dc2626}
+.written-card{position:relative;overflow:hidden;border-width:2px;border-right-width:9px;padding:24px 24px 22px}
+.written-card::before{content:"";position:absolute;inset:0 0 auto;height:8px;background:var(--accent,#075985)}
+.written-card:nth-child(1){--accent:#2563eb;background:linear-gradient(180deg,#f8fbff,#fff)}
+.written-card:nth-child(2){--accent:#0f766e;background:linear-gradient(180deg,#f6fffc,#fff)}
+.written-card:nth-child(3){--accent:#d97706;background:linear-gradient(180deg,#fffaf2,#fff)}
+.written-card:nth-child(4){--accent:#9333ea;background:linear-gradient(180deg,#fcf8ff,#fff)}
+.written-card:nth-child(5){--accent:#dc2626;background:linear-gradient(180deg,#fff8f8,#fff)}
+.written-card{border-right-color:var(--accent,#075985)}
+.written-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.written-number{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;border-radius:50%;background:var(--accent,#075985);color:#fff;font-weight:800;font-size:20px;box-shadow:0 8px 18px rgba(15,23,42,.14)}
+.written-card .q-title{margin:0;flex:1}
+.written-card textarea{background:rgba(255,255,255,.9)}
+@media(max-width:700px){
+  body{font-size:17px}.grid{grid-template-columns:1fr}.app{padding:14px}.hero{padding:22px}.card{padding:18px}
+  .hero h1{font-size:32px}.hero p{font-size:19px}.badge{font-size:15px;padding:7px 12px}
+  .sticky{top:0;padding:6px 0}.toolbar{align-items:stretch;flex-direction:column;gap:12px;padding:12px}
+  .progress-wrap{max-width:none;width:100%}
+  .timer-panel{justify-content:space-between}.timer{flex:1;min-width:0;justify-content:center}
+  .section-head{align-items:flex-start;flex-direction:column;padding:16px}.section-main{gap:10px}.section-icon{width:44px;height:44px}.section-title{font-size:24px}.section-meta{white-space:normal}.q-title{font-size:21px}.option,textarea{font-size:18px}
+  .option:hover{transform:none}
+  .case-card{padding:0}.case-header,.case-body{padding:18px}.case-header .q-title{font-size:22px}.case-questions{grid-template-columns:1fr}
+  .written-card{padding:22px 18px 18px}.written-head{gap:10px}.written-number{min-width:40px;height:40px;font-size:18px}
+  .start-notice{padding:16px}.start-notice h3{font-size:20px}.start-notice p{font-size:16px}
+  .student-card{grid-template-columns:1fr}
+  .btn{width:100%}
+}
+@media(max-width:430px){
+  body{font-size:16px;line-height:1.85}
+  .app{padding:10px}
+  .hero{padding:18px 16px}
+  .hero h1{font-size:28px}
+  .hero p{font-size:17px}
+  .eyebrow{font-size:14px}
+  .meta{gap:7px}
+  .badge{font-size:14px;padding:6px 10px}
+  .timer{font-size:21px;padding:8px 10px}
+  .timer-icon,.print-icon,.notice-icon{width:18px;height:18px}
+  .small,.section-meta{font-size:14px}
+  .section-head{margin:28px 0 12px;padding:14px;border-right-width:8px}
+  .section-main{align-items:flex-start}
+  .section-icon{width:38px;height:38px}
+  .section-icon svg{width:21px;height:21px}
+  .section-title{font-size:21px}
+  .card{padding:15px;margin:13px 0}
+  .q-title{font-size:19px;line-height:1.7}
+  .option{gap:9px;padding:12px 11px;font-size:16px;line-height:1.7;border-right-width:6px}
+  .option input{margin-top:8px;transform:scale(1.12)}
+  textarea,input[type="text"]{font-size:16px;padding:12px}textarea{min-height:112px}
+  .start-notice{gap:10px;padding:14px}
+  .start-notice .notice-icon-wrap{width:40px;height:40px}
+  .start-notice h3{font-size:18px}
+  .start-notice p{font-size:15px}
+  .start-count{min-width:32px;height:32px}
+  .written-card{padding:20px 14px 15px}
+  .written-number{min-width:36px;height:36px;font-size:16px}
+  .case-text{padding:15px;font-size:16px;line-height:1.9}.case-prompt{padding:13px}
+  .case-prompt b{font-size:17px}
+  .answer-box{font-size:16px}
+}
+@media print{
+  body{background:#fff}
+  .sticky,.actions,.no-print{display:none!important}
+  .hero{box-shadow:none;background:#fff!important;color:#000;border:1px solid #bbb}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="eyebrow">الوحدة الأولى — الدرس الثاني</div>
+    <h1>كيف يعمل الذكاء الاصطناعي؟</h1>
+    <p>اختبار شامل — الصف الثاني الثانوي</p>
+    <div class="meta">
+      <span class="badge">الزمن: 30 دقيقة</span>
+      <span class="badge">الدرجة: 30</span>
+      <span class="badge">21 سؤالا</span>
+    </div>
+  </header>
+
+  <div class="sticky">
+    <div class="toolbar">
+      <div class="timer-panel">
+        <div class="timer is-paused" id="timerBox" aria-label="الوقت المتبقي">
+          <svg class="timer-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2"></path><path d="M9 2h6"></path></svg>
+          <span id="timer">30:00</span>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <div class="small">التقدم</div>
+          <div class="small"><span id="answered">0</span> / 21</div>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      </div>
+      <button class="btn btn-light no-print" onclick="window.print()" title="طباعة">
+        <svg class="print-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
+        طباعة
+      </button>
+    </div>
+  </div>
+
+  <div class="start-notice no-print" id="startNotice" role="status" aria-live="polite">
+    <span class="notice-icon-wrap">
+      <svg class="notice-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+    </span>
+    <div>
+      <h3>استعد لبدء الامتحان</h3>
+      <p>اقرأ كل سؤال جيدا. بعض الاختيارات متقاربة عمدا، والمطلوب اختيار الإجابة الأدق. سيبدأ المؤقت خلال <span class="start-count" id="startCountdown">10</span> ثوان.</p>
+    </div>
+  </div>
+
+  <form id="examForm">
+    <div class="card student-card">
+      <div class="field">
+        <label for="studentName">اسم الطالب</label>
+        <input type="text" id="studentName" name="studentName" placeholder="اكتب اسمك هنا">
+      </div>
+      <div class="field">
+        <label for="studentClass">الفصل</label>
+        <input type="text" id="studentClass" name="studentClass" placeholder="مثال: 2/1">
+      </div>
+      <div class="field">
+        <label for="examDate">التاريخ</label>
+        <input type="text" id="examDate" name="examDate" placeholder="اكتب التاريخ">
+      </div>
+    </div>
+
+    <div class="submitted-note no-print" id="submittedNote">تم إنهاء الامتحان. تم قفل الإجابات ولا يمكن تعديلها الآن.</div>
+
+    <div class="section-head section-mcq">
+      <div class="section-main">
+        <span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span>
+        <h2 class="section-title">أولا: اختر الإجابة الصحيحة</h2>
+      </div>
+      <div class="section-meta">15 سؤالا × درجة = 15 درجة</div>
+    </div>
+    <div id="mcq"></div>
+
+    <div class="section-head section-written">
+      <div class="section-main">
+        <span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg></span>
+        <h2 class="section-title">ثانيا: فهم وتطبيق</h2>
+      </div>
+      <div class="section-meta">5 أسئلة × درجتين = 10 درجات</div>
+    </div>
+    <div id="written"></div>
+
+    <div class="section-head section-case">
+      <div class="section-main">
+        <span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2v7.3"></path><path d="M14 2v7.3"></path><path d="M8.5 2h7"></path><path d="M14 9.3 20.7 20A1.3 1.3 0 0 1 19.6 22H4.4a1.3 1.3 0 0 1-1.1-2L10 9.3"></path><path d="M7.5 16h9"></path></svg></span>
+        <h2 class="section-title">ثالثا: السؤال الشامل</h2>
+      </div>
+      <div class="section-meta">5 درجات</div>
+    </div>
+    <div id="comprehensive"></div>
+
+    <div class="actions no-print">
+      <button type="button" class="btn btn-primary" onclick="submitExam()">إنهاء الامتحان</button>
+      <button type="button" class="btn btn-light" onclick="resetExam()">إعادة المحاولة</button>
+    </div>
+  </form>
+
+  <section id="result" class="card result">
+    <h2>النتيجة</h2>
+    <div class="score"><span id="score">0</span> / 15</div>
+    <p>هذه الدرجة تخص أسئلة الاختيار من متعدد التي يتم تصحيحها تلقائيًا. الأسئلة الكتابية تحتاج مراجعة المعلم أو مقارنة الإجابة بنموذج التصحيح أدناه.</p>
+    <div id="feedback"></div>
+  </section>
+</div>
+
+<script>
+const mcqs = [
+{q:"ما الفكرة الأساسية في Machine Learning — تعلم الآلة؟",o:["أن يكتب المبرمج قاعدة ثابتة لكل حالة.","أن يتعلم النظام أنماطا من البيانات ثم يستخدمها مع حالات جديدة.","أن يعمل الحاسب بدون بيانات.","أن يكون كل نظام ذكاء اصطناعي قادرا على إنشاء صور ونصوص."],a:1},
+{q:"يعمل برنامج وفق القاعدة: إذا كانت الدرجة أكبر من أو تساوي 50 → ناجح. بينما تم تدريب نظام آخر باستخدام آلاف رسائل البريد المصنفة مسبقًا، ثم أصبح يصنف رسالة جديدة إلى Spam أو Not Spam. ما الفرق الأساسي بين الطريقتين؟",o:["الأول يعتمد على قاعدة محددة مسبقًا، بينما الثاني يتعلم أنماطًا Patterns من البيانات.","كلاهما يعتمد على Machine Learning.","الأول يعتمد على Deep Learning والثاني على Generative AI.","كلاهما يعتمد على Generative AI."],a:0},
+{q:"أي عبارة تصف العلاقة بين AI وML وDL وGenAI بصورة مناسبة لما درسناه؟",o:["AI وMachine Learning لهما المعنى نفسه تماما.","Generative AI هو المجال الأكبر ويحتوي داخله كل أنواع AI.","Machine Learning فرع من AI، وDeep Learning أسلوب داخل Machine Learning، وGenerative AI يستطيع إنشاء محتوى جديدا غالبا باستخدام نماذج متقدمة.","Deep Learning لا علاقة له بMachine Learning."],a:2},
+{q:"يستقبل نظام صورة جديدة ثم يعرض: Cat = 91% ، Dog = 9%. ما نوع المهمة؟",o:["Generation — التوليد","Classification — التصنيف","Training — التدريب","Hallucination — الهلوسة"],a:1},
+{q:"قال طالب: «كل نظام يستخدم Deep Learning يجب أن يكون Generative AI.» ما التقييم الأدق؟",o:["العبارة خاطئة؛ لأن Deep Learning يمكن استخدامه أيضًا في مهام مثل التعرف والتصنيف.","العبارة صحيحة دائمًا.","العبارة صحيحة عند التعامل مع الصور فقط.","العبارة خاطئة؛ لأن Deep Learning لا يستخدم Neural Networks."],a:0},
+{q:"دُرّب نموذج باستخدام عدد كبير من الصور، لكن معظم الصور تمثل ظروفًا متشابهة جدًا. إذا استُخدم لاحقًا مع صور في ظروف مختلفة لم تظهر له بما يكفي أثناء التدريب، فما الاحتمال الأقرب؟",o:["سيعمل بالكفاءة نفسها بالضرورة لأن عدد الصور كبير.","سيتحول تلقائيًا إلى Generative AI.","قد يواجه صعوبة في التعامل مع الحالات الجديدة لأنها لم تظهر له بما يكفي أثناء التدريب.","لن يحتاج إلى النموذج بعد انتهاء التدريب."],a:2},
+{q:"لاحظ نظام أن كثيرًا من المستخدمين الذين يشترون Laptop وMouse يشترون أيضًا Laptop Stand، فبدأ يقترح Laptop Stand على مستخدمين لديهم أنماط شراء مشابهة. ما الفكرة الأساسية هنا؟",o:["إنشاء محتوى جديد Generation.","تنفيذ قاعدة ثابتة يجب أن يكتبها المبرمج لكل مستخدم.","ترتيب المنتجات أبجديًا.","تعلم أنماط Patterns من بيانات المستخدمين."],a:3},
+{q:"أي موقف يمثل Generation — التوليد وليس Classification — التصنيف؟",o:["تحديد الرسالة إلى Spam أو Not Spam.","إنشاء صورة جديدة بناءً على وصف نصي.","تحديد الصورة إلى Cat أو Dog.","تحديد النبات إلى Healthy أو Diseased."],a:1},
+{q:"أنتج Generative AI إجابة تاريخية منظمة تحتوي على اسم جامعة وتاريخ واقتباس، لكن لم يجد الطالب مصدرًا موثوقًا يؤكد هذه المعلومات. ما المشكلة المحتملة؟",o:["Classification Error","Training","AI Hallucination","Input Layer"],a:2},
+{q:"أي وصف يناسب معظم أنظمة الذكاء الاصطناعي الحالية؟",o:["مصممة غالبا لأداء مهمة محددة أو مجموعة محدودة من المهام.","تستطيع تنفيذ أي مهمة بشرية بنفس كفاءة الإنسان.","تمتلك وعيا ومشاعر مثل الإنسان.","جميعها أنظمة Generative AI."],a:0},
+{q:"إذا ظهر نوع معين من الحالات مرات قليلة جدًا في بيانات التدريب، فما المتوقع؟",o:["سيصبح التعرف عليه أسهل تلقائيًا.","لن يؤثر ذلك على النموذج مطلقًا.","تتحول المهمة تلقائيًا إلى Generation.","قد يواجه النموذج صعوبة في التعامل معه؛ لأنه لم ير أمثلة كافية لهذا النمط أثناء التدريب."],a:3},
+{q:"أي عبارة مما يلي خاطئة؟",o:["Machine Learning أحد فروع Artificial Intelligence.","Artificial Intelligence وMachine Learning لهما المعنى نفسه.","Deep Learning أحد أساليب Machine Learning.","Generative AI يستطيع إنشاء محتوى جديد."],a:1},
+{q:"نظام أول يستقبل صورة نبات ويحددها إلى Healthy / Diseased، ثم يستخدم نظام آخر لإنشاء تقرير نصي جديد عن حالة النبات. ما التحليل الصحيح؟",o:["كلا النظامين يقومان بالتوليد.","الأول يقوم بالتوليد والثاني بالتصنيف.","الأول يقوم بالتصنيف والثاني بالتوليد.","كلا النظامين يقومان بالتصنيف."],a:2},
+{q:"استخدم طالب Generative AI للمساعدة في إعداد تقرير مدرسي. أي مسار يمثل الاستخدام الأكثر مسؤولية؟",o:["AI Output → Verify Information → Check Reliable Sources → Correct Errors → Use","AI → Copy → Paste → Submit","AI → Submit → Verify","AI → Copy → Remove Sources → Submit"],a:0},
+{q:"أي موقف من الآتي ليس المثال الأنسب على AI Hallucination؟",o:["أداة توليد نصوص اخترعت اسم مرجع غير موجود.","أداة توليد نصوص ذكرت تاريخًا خاطئًا في إجابة تبدو مقنعة.","أداة توليد نصوص نسبت عبارة إلى شخص لم يقلها.","نموذج تصنيف أخطأ فصنف صورة كلب على أنها قطة."],a:3}
+];
+
+const writtenQs = [
+"قال طالب: «كلما زاد عدد الأمثلة المستخدمة في التدريب، أصبح النموذج أفضل بالضرورة.» هل العبارة دقيقة؟ صححها اعتمادًا على ما تعلمته عن Training Data.",
+"تم تدريب نموذج للتعرف على النباتات باستخدام صور التُقطت نهارًا فقط. عند استخدامه مع صور ليلية، أصبح أكثر عرضة للخطأ. فسر سببًا محتملًا اعتمادًا على بيانات التدريب Training Data.",
+"يؤدي Spam Filter ونظام Product Recommendation مهمتين مختلفتين. ما الشيء المشترك بينهما من حيث كيفية عمل Machine Learning؟",
+"قارن بين Classification — التصنيف وGeneration — التوليد، واذكر مثالًا واحدًا على كل منهما.",
+"استخدم طالب AI للحصول على معلومة مهمة لتقرير مدرسي، وذكر النظام اسم كتاب وتاريخ نشر واسم مؤلف. اذكر خطوتين ينبغي على الطالب القيام بهما قبل استخدام هذه المعلومات."
+];
+
+const writtenAnswers = [
+"لا. عدد الأمثلة مهم، لكنه ليس العامل الوحيد. يجب أن تكون البيانات متنوعة وممثلة للحالات المختلفة؛ لأن النموذج قد يخطئ في الحالات التي لم يرها أو رآها مرات قليلة أثناء التدريب.",
+"لأن الصور الليلية تختلف عن الصور التي تعلم منها النموذج أثناء التدريب. إذا لم يتدرب على أمثلة كافية لصور ليلية، فقد لا يتعرف على الأنماط فيها بدقة.",
+"كلاهما يتعلم أنماطا من بيانات سابقة، ثم يستخدم هذه الأنماط لاتخاذ قرار أو تقديم اقتراح مع بيانات جديدة.",
+"التصنيف يحدد فئة لبيانات موجودة، مثل Spam / Not Spam أو Cat / Dog. أما التوليد فينشئ محتوى جديدا، مثل إنشاء نص أو صورة بناء على طلب المستخدم.",
+"أولا: لا يعتمد على الإجابة مباشرة. ثانيا: يتحقق من المعلومة في مصدر موثوق، مثل كتاب أو موقع رسمي أو مصدر علمي، ثم يصحح أي خطأ قبل استخدامها."
+];
+
+const comp = [
+"ما الجزء الذي يمثل Training — التدريب؟",
+"ما الجزء الذي يمثل Classification / Prediction — التصنيف/التنبؤ؟",
+"ما الجزء الذي يمثل Generation — التوليد؟",
+"ما المشكلة المحتملة في المعلومة التي لم يجد المزارع مصدرًا يؤكدها؟",
+"ما التصرف المسؤول قبل الاعتماد على هذه المعلومة؟"
+];
+const compAns = [
+"تدريب النموذج باستخدام آلاف الصور المصنفة إلى نبات سليم ونبات مصاب.",
+"تصنيف الصورة الجديدة على أنها نبات مصاب.",
+"إنشاء التقرير النصي الجديد.",
+"قد تكون المعلومة غير صحيحة وتمثل حالة محتملة من AI Hallucination.",
+"التحقق من المعلومة باستخدام مصدر موثوق قبل الاعتماد عليها."
+];
+
+function render(){
+ const mcqWrap=document.getElementById("mcq");
+ mcqs.forEach((x,i)=>{
+   const d=document.createElement("div"); d.className="card question";
+   d.innerHTML=`<div class="q-title">${i+1}. ${x.q}</div>`+
+   x.o.map((o,j)=>`<label class="option" data-q="${i}" data-o="${j}"><input type="radio" name="q${i}" value="${j}"> ${["أ","ب","ج","د"][j]}) ${o}</label>`).join("");
+   mcqWrap.appendChild(d);
+ });
+ const w=document.getElementById("written");
+ writtenQs.forEach((q,i)=>{
+   const d=document.createElement("div"); d.className="card question written-card";
+   d.innerHTML=`<div class="written-head"><span class="written-number">${16+i}</span><div class="q-title">${q}</div></div><textarea name="w${i}" placeholder="اكتب إجابتك هنا..."></textarea>`;
+   w.appendChild(d);
+ });
+ const c=document.getElementById("comprehensive");
+ let box=document.createElement("div"); box.className="card question case-card";
+ box.innerHTML=`<div class="case-header">
+   <div class="q-title">21. حالة تطبيقية: تطبيق ذكاء اصطناعي لمساعدة مزارع</div>
+ </div>
+ <div class="case-body">
+   <div class="case-text">
+     <p>يريد مزارع استخدام تطبيق ذكاء اصطناعي للتمييز بين صور النباتات السليمة والمصابة. تم استخدام آلاف الصور المصنفة إلى <b>Healthy Plant — نبات سليم</b> و <b>Diseased Plant — نبات مصاب</b> لبناء النموذج.</p>
+     <p>بعد ذلك أدخل المزارع صورة جديدة، فحددها التطبيق على أنها <b>Diseased Plant — نبات مصاب</b>.</p>
+     <p>ثم استخدم التطبيق نظاما آخر لإنشاء تقرير نصي جديد عن حالة النبات.</p>
+     <p>احتوى التقرير على معلومة محددة عن المرض، لكن المزارع لم يجد مصدرا موثوقا يؤكد هذه المعلومة.</p>
+   </div>
+   <div class="case-questions">`+
+ comp.map((q,i)=>`<div class="case-prompt"><b>${["أ","ب","ج","د","هـ"][i]}) ${q}</b><textarea name="c${i}" placeholder="اكتب إجابتك هنا..."></textarea></div>`).join("")+
+ `</div></div>`;
+ c.appendChild(box);
+
+ const form=document.getElementById("examForm");
+ form.addEventListener("input",()=>{updateProgress(); saveDraft();});
+ form.addEventListener("change",()=>{updateProgress(); saveDraft();});
+}
+function updateProgress(){
+ let n=0;
+ mcqs.forEach((_,i)=>{ if(document.querySelector(`input[name=q${i}]:checked`)) n++; });
+ writtenQs.forEach((_,i)=>{ if(document.querySelector(`textarea[name=w${i}]`).value.trim()) n++; });
+ let compFilled = comp.filter((_,i)=>document.querySelector(`textarea[name=c${i}]`).value.trim()).length;
+ if(compFilled===5) n++;
+ document.getElementById("answered").textContent=n;
+ document.getElementById("progressBar").style.width=(n/21*100)+"%";
+}
+function showResults(){
+ let score=0;
+ mcqs.forEach((x,i)=>{
+   const chosen=document.querySelector(`input[name=q${i}]:checked`);
+   document.querySelectorAll(`[data-q="${i}"]`).forEach(el=>{
+     const oi=+el.dataset.o;
+     if(oi===x.a) el.classList.add("correct");
+     if(chosen && +chosen.value===oi && oi!==x.a) el.classList.add("wrong");
+   });
+   if(chosen && +chosen.value===x.a) score++;
+ });
+ document.getElementById("score").textContent=score;
+ let html="<h3>نموذج إجابات الأسئلة الكتابية</h3>";
+ writtenAnswers.forEach((a,i)=> html+=`<div class="answer-box"><b>${16+i}.</b> ${a}</div>`);
+ html+="<h3>نموذج إجابة السؤال الشامل</h3>";
+ compAns.forEach((a,i)=> html+=`<div class="answer-box"><b>${["أ","ب","ج","د","هـ"][i]})</b> ${a}</div>`);
+ document.getElementById("feedback").innerHTML=html;
+ const r=document.getElementById("result"); r.style.display="block"; r.scrollIntoView({behavior:"smooth"});
+}
+function submitExam(){
+ if(document.getElementById("examForm").classList.contains("is-submitted")) return;
+ if(timeLeft>0 && !confirm("هل أنت متأكد من إنهاء الامتحان؟ لا يمكنك تعديل الإجابات بعد ذلك.")) return;
+ stopTimer(timeLeft<=0 ? "finished" : "paused");
+ localStorage.removeItem(EXAM_TIMER_KEY);
+ localStorage.setItem(EXAM_SUBMITTED_KEY,"true");
+ localStorage.setItem(EXAM_SUBMITTED_TIME_KEY,String(timeLeft));
+ saveDraft();
+ showResults();
+ lockExam();
+}
+function resetExam(){
+ if(!confirm("هل تريد مسح كل الإجابات وإعادة الامتحان؟")) return;
+ document.getElementById("examForm").reset();
+ document.querySelectorAll(".option").forEach(x=>x.classList.remove("correct","wrong"));
+ document.getElementById("result").style.display="none";
+ updateProgress();
+ timeLeft=EXAM_DURATION;
+ stopTimer();
+ localStorage.removeItem(EXAM_TIMER_KEY);
+ localStorage.removeItem(EXAM_DRAFT_KEY);
+ localStorage.removeItem(EXAM_SUBMITTED_KEY);
+ localStorage.removeItem(EXAM_SUBMITTED_TIME_KEY);
+ unlockExam();
+ updateTimerDisplay();
+ showStartNotice();
+}
+const EXAM_DURATION=30*60;
+const EXAM_TIMER_KEY="lesson2ExamEndTime";
+const EXAM_DRAFT_KEY="lesson2ExamDraft";
+const EXAM_SUBMITTED_KEY="lesson2ExamSubmitted";
+const EXAM_SUBMITTED_TIME_KEY="lesson2ExamSubmittedTimeLeft";
+let timeLeft=EXAM_DURATION;
+let timerInterval=null;
+let startNoticeInterval=null;
+function getDraft(){
+ const data={studentName:"",studentClass:"",examDate:"",mcq:{},written:{},comp:{}};
+ data.studentName=document.getElementById("studentName").value;
+ data.studentClass=document.getElementById("studentClass").value;
+ data.examDate=document.getElementById("examDate").value;
+ mcqs.forEach((_,i)=>{
+   const chosen=document.querySelector(`input[name=q${i}]:checked`);
+   if(chosen) data.mcq[i]=chosen.value;
+ });
+ writtenQs.forEach((_,i)=>data.written[i]=document.querySelector(`textarea[name=w${i}]`).value);
+ comp.forEach((_,i)=>data.comp[i]=document.querySelector(`textarea[name=c${i}]`).value);
+ return data;
+}
+function saveDraft(){
+ localStorage.setItem(EXAM_DRAFT_KEY,JSON.stringify(getDraft()));
+}
+function restoreDraft(){
+ const raw=localStorage.getItem(EXAM_DRAFT_KEY);
+ if(!raw) return;
+ try{
+   const data=JSON.parse(raw);
+   document.getElementById("studentName").value=data.studentName || "";
+   document.getElementById("studentClass").value=data.studentClass || "";
+   document.getElementById("examDate").value=data.examDate || "";
+   Object.entries(data.mcq || {}).forEach(([i,value])=>{
+     const input=document.querySelector(`input[name=q${i}][value="${value}"]`);
+     if(input) input.checked=true;
+   });
+   Object.entries(data.written || {}).forEach(([i,value])=>{
+     const area=document.querySelector(`textarea[name=w${i}]`);
+     if(area) area.value=value;
+   });
+   Object.entries(data.comp || {}).forEach(([i,value])=>{
+     const area=document.querySelector(`textarea[name=c${i}]`);
+     if(area) area.value=value;
+   });
+ }catch(e){
+   localStorage.removeItem(EXAM_DRAFT_KEY);
+ }
+}
+function lockExam(){
+ const form=document.getElementById("examForm");
+ form.classList.add("is-submitted");
+ form.querySelectorAll("input, textarea").forEach(el=>el.disabled=true);
+ document.getElementById("submittedNote").classList.add("is-visible");
+}
+function unlockExam(){
+ const form=document.getElementById("examForm");
+ form.classList.remove("is-submitted");
+ form.querySelectorAll("input, textarea").forEach(el=>el.disabled=false);
+ document.getElementById("submittedNote").classList.remove("is-visible");
+}
+function syncTimeLeft(){
+ const savedEndTime=Number(localStorage.getItem(EXAM_TIMER_KEY));
+ if(!savedEndTime) return false;
+ timeLeft=Math.max(0,Math.ceil((savedEndTime-Date.now())/1000));
+ return true;
+}
+function updateTimerDisplay(){
+ const m=String(Math.floor(timeLeft/60)).padStart(2,"0"), s=String(timeLeft%60).padStart(2,"0");
+ document.getElementById("timer").textContent=`${m}:${s}`;
+}
+function setTimerState(state){
+ const box=document.getElementById("timerBox");
+ box.classList.toggle("is-paused",state==="paused");
+ box.classList.toggle("is-finished",state==="finished");
+}
+function startTimer(){
+ if(timerInterval || timeLeft<=0) return;
+ if(!localStorage.getItem(EXAM_TIMER_KEY)){
+   localStorage.setItem(EXAM_TIMER_KEY,String(Date.now()+timeLeft*1000));
+ }
+ setTimerState("running");
+ timerInterval=setInterval(()=>{
+   syncTimeLeft();
+   updateTimerDisplay();
+   if(timeLeft<=0){
+     stopTimer("finished");
+     submitExam();
+   }
+ },1000);
+}
+function stopTimer(state="paused"){
+ if(timerInterval){
+   clearInterval(timerInterval);
+   timerInterval=null;
+ }
+ setTimerState(state);
+}
+function showStartNotice(seconds=10){
+ const notice=document.getElementById("startNotice");
+ const count=document.getElementById("startCountdown");
+ let remaining=seconds;
+ if(startNoticeInterval) clearInterval(startNoticeInterval);
+ setTimerState("paused");
+ notice.classList.remove("is-hidden");
+ count.textContent=remaining;
+ startNoticeInterval=setInterval(()=>{
+   remaining--;
+   count.textContent=remaining;
+   if(remaining<=0){
+     clearInterval(startNoticeInterval);
+     startNoticeInterval=null;
+     notice.classList.add("is-hidden");
+     startTimer();
+   }
+ },1000);
+}
+render();
+restoreDraft();
+updateProgress();
+if(localStorage.getItem(EXAM_SUBMITTED_KEY)==="true"){
+ timeLeft=Number(localStorage.getItem(EXAM_SUBMITTED_TIME_KEY)) || 0;
+ updateTimerDisplay();
+ showResults();
+ lockExam();
+ document.getElementById("startNotice").classList.add("is-hidden");
+}else if(syncTimeLeft()){
+ updateTimerDisplay();
+ if(timeLeft>0){
+   document.getElementById("startNotice").classList.add("is-hidden");
+   startTimer();
+ }else{
+   stopTimer("finished");
+ }
+}else{
+ updateTimerDisplay();
+ showStartNotice();
+}
+</script>
+</body>
+</html>
